@@ -98,13 +98,20 @@ private:
     static void callback(struct ev_loop *loop, struct ev_timer *timer, int revents)
     {
         // retrieve the this pointer
-        // MyTimer *self = static_cast<MyTimer *>(timer->data);
+        MyTimer *self = static_cast<MyTimer *>(timer->data);
         time_t seconds;
         seconds = time(NULL);
 
-        cout << "from timer " << seconds << endl;
-        // publish a message
-        // self->_channel->publish("", self->_queue, "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        double average;
+        if ((*(self->count)) == 0)
+        {
+            average = 0;
+        }
+        else
+        {
+            average = (*(self->accumulatedTemp)) / (*(self->count));
+        }
+        cout << "at time= " << seconds << " average = " << average << " accumulated = " << (*(self->accumulatedTemp)) << endl;
     }
 
 public:
