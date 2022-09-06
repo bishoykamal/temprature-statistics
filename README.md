@@ -12,5 +12,5 @@
 
 ```
   ./build_sender.sh
-  ./build_sender.sh
+  ./build_receiver.sh
 ```
