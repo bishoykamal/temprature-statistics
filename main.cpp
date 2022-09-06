@@ -166,8 +166,8 @@ int main()
     int count = 0;
 
     // create a temporary queue
-    channel.declareQueue(AMQP::exclusive).onSuccess([&connection, &channel, loop](const std::string &name, uint32_t messagecount, uint32_t consumercount)
-                                                    {
+    channel.declareQueue("temprature-queue", AMQP::exclusive).onSuccess([&connection, &channel, loop, &acc, &count](const std::string &name, uint32_t messagecount, uint32_t consumercount)
+                                                                        {
 
             // report the name of the temporary queue
             std::cout << "declared queue " << name << std::endl;
@@ -184,6 +184,7 @@ int main()
 
             // construct a timer that is going to publish stuff
             auto *timer = new MyTimer(loop,&acc,&count ); });
+    channel.bindQueue("temprature-exchange", "temprature-queue", "temprature-routing-key");
 
     auto startCb = [](const std::string &consumertag)
     {
