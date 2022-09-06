@@ -86,17 +86,8 @@ private:
      */
     struct ev_timer _timer;
 
-    /**
-     *  Pointer towards the AMQP channel
-     *  @var AMQP::TcpChannel
-     */
-    AMQP::TcpChannel *_channel;
-
-    /**
-     *  Name of the queue
-     *  @var std::string
-     */
-    std::string _queue;
+    double *accumulatedTemp;
+    int *count;
 
     /**
      *  Callback method that is called by libev when the timer expires
@@ -123,7 +114,7 @@ public:
      *  @param  channel
      *  @param  queue
      */
-    MyTimer(struct ev_loop *loop, AMQP::TcpChannel *channel, std::string queue) : _channel(channel), _queue(std::move(queue))
+    MyTimer(struct ev_loop *loop, double *_accumulatedTemp, int *_count) : accumulatedTemp(_accumulatedTemp), count(_count)
     {
         // initialize the libev structure
         ev_timer_init(&_timer, callback, 5.0, 5.0);
@@ -192,6 +183,7 @@ int main()
             //});
 
             // construct a timer that is going to publish stuff
+            auto *timer = new MyTimer(loop,&acc,&count ); });
 
     auto startCb = [](const std::string &consumertag)
     {
