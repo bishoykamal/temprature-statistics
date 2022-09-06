@@ -171,6 +171,9 @@ int main()
     // we need a channel too
     AMQP::TcpChannel channel(&connection);
 
+    double acc = 0;
+    int count = 0;
+
     // create a temporary queue
     channel.declareQueue(AMQP::exclusive).onSuccess([&connection, &channel, loop](const std::string &name, uint32_t messagecount, uint32_t consumercount)
                                                     {
@@ -189,7 +192,36 @@ int main()
             //});
 
             // construct a timer that is going to publish stuff
-            auto *timer = new MyTimer(loop, &channel, name); });
+
+    auto startCb = [](const std::string &consumertag)
+    {
+        std::cout << "consume operation started" << std::endl;
+    };
+
+    // callback function that is called when the consume operation failed
+    auto errorCb = [](const char *message)
+    {
+        std::cout << "consume operation failed" << std::endl;
+    };
+
+    // callback operation when a message was received
+    auto messageCb = [&channel, &acc, &count](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered)
+    {
+        double temp = stod(message.body());
+        acc = acc + temp;
+        cout << acc << endl;
+        count++;
+        cout << count << endl;
+
+        // acknowledge the message
+        channel.ack(deliveryTag);
+    };
+
+    // start consuming from the queue, and install the callbacks
+    channel.consume("temprature-queue")
+        .onReceived(messageCb)
+        .onSuccess(startCb)
+        .onError(errorCb);
 
     // connection.close();
 
