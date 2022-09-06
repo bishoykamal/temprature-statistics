@@ -209,9 +209,8 @@ int main()
     {
         double temp = stod(message.body());
         acc = acc + temp;
-        cout << acc << endl;
         count++;
-        cout << count << endl;
+        cout << "recieved reading num: " << count << " temp. =" << temp << endl;
 
         // acknowledge the message
         channel.ack(deliveryTag);
